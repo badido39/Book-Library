@@ -21,9 +21,8 @@ model Member {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  username  String   @unique
-  hash      String
-  hashSalt  String
+  username String @unique
+  hash     String
 
   profile Profile?
 }
@@ -33,7 +32,7 @@ model Profile {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  member Member @relation(fields: [memberId],references: [id])
+  member   Member @relation(fields: [memberId], references: [id])
   memberId String @unique
 
   firstName String?
@@ -41,7 +40,6 @@ model Profile {
   email     String?
   address   String?
   tel       String?
-
 }
 
 model book {

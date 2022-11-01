@@ -1,37 +1,64 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Member } from '@prisma/client/';
 import { CreateMemberDto } from './dto/create-member.dto';
-import { UpdateMemberDto } from './dto/update-member.dto';
 import * as argon2 from 'argon2';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime';
 
 @Injectable()
 export class MemberService {
   constructor(private prisma: PrismaService) {}
 
-  async create(createMemberDto: CreateMemberDto) {
+  async signUp(createMemberDto: CreateMemberDto) {
     const hash: string = await CryptPassword(createMemberDto.password);
-    //FEATURES:CREATE HASH PASSWORD
-
-    const hashSalt = 'hashSalt';
     const member = await this.prisma.member
       .create({
         data: {
           username: createMemberDto.username,
           hash: hash,
-          hashSalt: hashSalt,
         },
       })
       .then((res) => {
         console.log(res);
+        delete res.hash;
         return res;
+      })
+      .catch((e: PrismaClientKnownRequestError) => {
+        if (e.code === 'P2002') {
+          throw new HttpException(
+            'Credential Already Taken',
+            HttpStatus.CONFLICT,
+          );
+        }
+        return JSON.stringify(e.message);
+      });
+    return member;
+  }
+
+  async login(loginDto: CreateMemberDto) {
+    const auth = await this.prisma.member
+      .findFirst({
+        where: {
+          username: loginDto.username,
+        },
+      })
+      .then(async (res) => {
+        if ((await ValidatePassword(loginDto.password, res.hash)) == true) {
+          return JSON.stringify('Login Succsufful');
+        }
+
+        throw new HttpException('Wrong Password', HttpStatus.BAD_REQUEST);
       })
       .catch((e) => {
         console.log(e);
         return e;
       });
-
-    return member;
+    return auth;
   }
 
   findAll() {
@@ -55,12 +82,10 @@ export class MemberService {
     const hash: string = await CryptPassword(updateMemberDto.password);
     //FEATURES:CREATE HASH PASSWORD
 
-    const hashSalt = 'hashSalt';
-
     //FEATURES:CREATE HASH PASSWORD
     const updatedMember = await this.prisma.member.update({
       where: { id },
-      data: { hash, hashSalt },
+      data: { hash },
     });
 
     return updatedMember;
@@ -92,4 +117,15 @@ const CryptPassword = async (password: string): Promise<string> => {
       return e;
     });
   return hash;
+};
+
+const ValidatePassword = async (
+  password: string,
+  hash: string,
+): Promise<boolean> => {
+  return argon2.verify(hash, password).then((argon2Match) => {
+    if (argon2Match) {
+      return argon2Match;
+    }
+  });
 };

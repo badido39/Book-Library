@@ -15,9 +15,14 @@ import { UpdateMemberDto } from './dto/update-member.dto';
 export class MemberController {
   constructor(private readonly memberService: MemberService) {}
   //                      FIXED
-  @Post('create')
-  create(@Body() createMemberDto: CreateMemberDto) {
-    return this.memberService.create(createMemberDto);
+  @Post('signup')
+  signUp(@Body() createMemberDto: CreateMemberDto) {
+    return this.memberService.signUp(createMemberDto);
+  }
+
+  @Post('login')
+  login(@Body() createMemberDto: CreateMemberDto) {
+    return this.memberService.login(createMemberDto);
   }
 
   @Get('findAll')
