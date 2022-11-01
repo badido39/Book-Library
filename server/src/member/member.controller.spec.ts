@@ -13,8 +13,4 @@ describe('MemberController', () => {
 
     controller = module.get<MemberController>(MemberController);
   });
-
-  it('should be defined', () => {
-    expect(controller).toBeDefined();
-  });
 });

@@ -51,12 +51,32 @@ export class MemberService {
     return member;
   }
 
-  update(id: number, updateMemberDto: UpdateMemberDto) {
-    return `This action updates a #${id} member`;
+  async update(id: string, updateMemberDto: Partial<CreateMemberDto>) {
+    const hash: string = await CryptPassword(updateMemberDto.password);
+    //FEATURES:CREATE HASH PASSWORD
+
+    const hashSalt = 'hashSalt';
+
+    //FEATURES:CREATE HASH PASSWORD
+    const updatedMember = await this.prisma.member.update({
+      where: { id },
+      data: { hash, hashSalt },
+    });
+
+    return updatedMember;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} member`;
+  async remove(id: string) {
+    const memeberToDelete = await this.findOne(id)
+      .then((res) => res)
+      .catch((e) => e);
+    await this.prisma.member
+      .delete({ where: { id } })
+      .then((res) => res)
+      .catch((e) => {
+        return e;
+      });
+    return memeberToDelete;
   }
 }
 
