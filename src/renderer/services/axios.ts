@@ -9,7 +9,7 @@ class HttpMethods {
     const result = await axios
       .get(BASE_API_URL + endPoint, headers)
       .then((res: AxiosResponse) => {
-        return res.data;
+        return { data: res.data, status: res.status };
       })
       .catch((e: AxiosResponse) => {
         return e.data;
