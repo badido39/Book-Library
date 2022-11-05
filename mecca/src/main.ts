@@ -12,7 +12,7 @@ async function bootstrap() {
   app.enableCors();
 
   const config = new DocumentBuilder()
-    .setTitle('مكتبتي')
+    .setTitle('My Library')
     .setDescription('The Books Management Software')
     .setVersion('1.0')
     .addTag('Book-Library')
