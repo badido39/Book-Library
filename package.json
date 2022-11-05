@@ -9,7 +9,8 @@
     "mecca:start": "cd mecca && yarn start",
     "mecca:dev": "cd mecca && yarn dev",
     "souf:start": "cd souf && yarn start",
-    "souf:main": "cd souf && yarn start:main"
+    "souf:main": "cd souf && yarn start:main",
+    "souf:test": "cd souf && yarn test"
   },
   "author": "",
   "license": "ISC"
