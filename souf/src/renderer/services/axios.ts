@@ -9,7 +9,7 @@ class HttpMethods {
     const result = await axios
       .get(BASE_API_URL + endPoint, headers)
       .then((res: AxiosResponse) => {
-        return res.data;
+        return { data: res.data, status: res.status };
       })
       .catch((e: AxiosResponse) => {
         return e.data;
@@ -21,9 +21,9 @@ class HttpMethods {
   Post = async (
     endPoint: string,
     headers?: Record<string, unknown>,
-    payload: Record<string, unknown>
-  ) => {
-    const result = await axios
+    payload?: Record<string, unknown>
+  ): Promise<void> => {
+    await axios
       .post(BASE_API_URL + endPoint, payload, headers)
       .then((res: AxiosResponse) => {
         return res.data;
@@ -31,7 +31,6 @@ class HttpMethods {
       .catch((e: AxiosResponse) => {
         return e.data;
       });
-    return result;
   };
 }
 export default HttpMethods;
