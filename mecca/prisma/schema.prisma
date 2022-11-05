@@ -1,0 +1,144 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         String      @id @default(uuid())
+  createdAt  DateTime    @default(now())
+  updatedAt  DateTime    @updatedAt
+  username   String      @unique
+  hash       String
+  memberShip MemberShip?
+  staff      Staff?
+}
+
+model Staff {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  firstName String?
+  lastName  String?
+  email     String?
+  address   String?
+  tel       String?
+  role      Role?       @relation(fields: [roleId], references: [id])
+  roleId    String?
+  user      User        @relation(fields: [userId], references: [id])
+  userId    String      @unique
+  Operation Operation[]
+}
+
+model MemberShip {
+  id                  String      @id @default(uuid())
+  createdAt           DateTime    @default(now())
+  updatedAt           DateTime    @updatedAt
+  firstName           String?
+  lastName            String?
+  email               String?
+  address             String?
+  tel                 String?
+  accountStatus       Int         @default(1) /// ===> 1.Pendding 2.Active 3.Banned 4.Canceled .....etc
+  totalBookCheckouted Int?        @default(0)
+  user                User        @relation(fields: [userId], references: [id])
+  userId              String      @unique
+  Card                Card[]
+  Operation           Operation[]
+}
+
+model Card {
+  id           String     @id @default(uuid())
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  cardNumber   String
+  barCode      String
+  issuedAt     DateTime   @default(now())
+  memberShip   MemberShip @relation(fields: [memberShipId], references: [id])
+  memberShipId String
+}
+
+model Book {
+  id            String      @id @default(uuid())
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  ISBN          String
+  title         String
+  subject       String
+  publisher     String
+  publishDate   DateTime
+  language      String
+  numberOfPages Int
+  dateOfUse     DateTime?   @default(now()) //date place in Library
+  author        Author      @relation(fields: [authorId], references: [id])
+  authorId      String
+  rack          Rack?       @relation(fields: [rackId], references: [id])
+  rackId        String?
+  BookStaus     BookStaus?  @relation(fields: [bookStausId], references: [id])
+  bookStausId   String?
+  Operation     Operation[]
+
+  @@unique([publisher, title, authorId, ISBN])
+}
+
+model Operation {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  returnDate DateTime? // Dat
+
+  OperationType   OperationType? @relation(fields: [operationTypeId], references: [id]) ///1Loan 2 Return 
+  operationTypeId String?
+
+  memberShip   MemberShip @relation(fields: [memberShipId], references: [id])
+  memberShipId String     @unique
+  staff        Staff      @relation(fields: [staffId], references: [id])
+  staffId      String     @unique
+
+  book   Book   @relation(fields: [bookId], references: [id])
+  bookId String
+}
+
+model Rack {
+  id                 String   @id @default(uuid())
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  locationIdentifier String //[Row . Classes , Galery]
+  Book               Book[]
+}
+
+model BookStaus {
+  id         String   @id @default(uuid())
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+  bookStatus String //[Avaliable , Damaged ,Stoled, inRepair]
+  Book       Book[]
+}
+
+model Author {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  name      String
+  Book      Book[]
+}
+
+model OperationType {
+  id        String      @id @default(uuid())
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  name      String
+  Operation Operation[]
+}
+
+model Role {
+  id        String   @id @default(uuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  role      String
+  Staff     Staff[]
+}
