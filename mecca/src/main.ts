@@ -6,10 +6,10 @@ import { PrismaService } from './prisma.service';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   const config = new DocumentBuilder()
-    .setTitle('Cats example')
-    .setDescription('The cats API description')
+    .setTitle('Management')
+    .setDescription('The Book Lobrary Management')
     .setVersion('1.0')
-    .addTag('cats')
+    .addTag('Book Library')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',

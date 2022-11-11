@@ -8,6 +8,26 @@ export class UsersService {
   constructor(private readonly prisma: PrismaService) {}
 
   async findOne(username: string) {
-    return this.prisma.user.findUnique({ where: { username } });
+    const user = this.prisma.user
+      .findUnique({ where: { username } })
+      .then((res) => {
+        return res;
+      })
+      .catch((e) => {
+        return e.message;
+      });
+    return user;
+  }
+
+  async getAllUsers() {
+    const users = this.prisma.user
+      .findMany()
+      .then((res) => {
+        return res;
+      })
+      .catch((e) => {
+        return e.message;
+      });
+    return users;
   }
 }

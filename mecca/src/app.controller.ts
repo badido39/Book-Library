@@ -25,24 +25,4 @@ export class AppController {
   async login(@Request() req, @Body() user: LoginDto) {
     return this.authService.login(req.user);
   }
-
-  @UseGuards(JwtAuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
-    return req.user;
-  }
-
-  @HasRoles(Role.ADMIN)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('admin')
-  onlyAdmin(@Request() req) {
-    return req.user;
-  }
-
-  @HasRoles(Role.USER)
-  @UseGuards(JwtAuthGuard, RolesGuard)
-  @Get('user')
-  onlyUser(@Request() req) {
-    return req.user;
-  }
 }
