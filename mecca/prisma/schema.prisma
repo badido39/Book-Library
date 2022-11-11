@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgres"
   url      = env("DATABASE_URL")
 }
 
@@ -13,6 +13,7 @@ model User {
   updatedAt  DateTime    @updatedAt
   username   String      @unique
   hash       String
+  roles      Role[]
   memberShip MemberShip?
   staff      Staff?
 }
@@ -26,8 +27,6 @@ model Staff {
   email     String?
   address   String?
   tel       String?
-  role      Role?       @relation(fields: [roleId], references: [id])
-  roleId    String?
   user      User        @relation(fields: [userId], references: [id])
   userId    String      @unique
   Operation Operation[]
@@ -65,7 +64,7 @@ model Book {
   id            String      @id @default(uuid())
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
-  ISBN          String
+  ISBN          String      @unique
   title         String
   subject       String
   publisher     String
@@ -135,10 +134,9 @@ model OperationType {
   Operation Operation[]
 }
 
-model Role {
-  id        String   @id @default(uuid())
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  role      String
-  Staff     Staff[]
+enum Role {
+  USER
+  ADMIN
+  CONTROLLER
+  SUPERVISOR
 }

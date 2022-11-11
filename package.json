@@ -8,6 +8,10 @@
     "mecca:build": "cd mecca && yarn build",
     "mecca:start": "cd mecca && yarn start",
     "mecca:dev": "cd mecca && yarn dev",
+    "mecca:generate": "cd mecca && npx prisma generate",
+    "mecca:migrate:reset": "cd mecca && yarn resetdb",
+    "mecca:migrate:create": "cd mecca && npx prisma migrate dev",
+    "mecca:migrate": "cd mecca && npx prisma migrate deploy",
     "souf:start": "cd souf && yarn start",
     "souf:main": "cd souf && yarn start:main",
     "souf:test": "cd souf && yarn test"

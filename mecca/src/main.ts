@@ -1,30 +1,28 @@
 import { NestFactory } from '@nestjs/core';
-import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
+import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { PrismaService } from './prisma.service';
-import envConfig from './app/config';
-
-const { hostname, port } = envConfig;
-console.log(hostname, port);
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  app.enableCors();
-
   const config = new DocumentBuilder()
-    .setTitle('My Library')
-    .setDescription('The Books Management Software')
+    .setTitle('Management')
+    .setDescription('The Book Lobrary Management')
     .setVersion('1.0')
-    .addTag('Book-Library')
-    .addBearerAuth()
+    .addTag('Book Library')
+    .addBearerAuth({
+      type: 'http',
+      scheme: 'bearer',
+      bearerFormat: 'JWT',
+      name: 'JWT',
+      description: 'Enter JWT token',
+      in: 'header',
+    })
     .build();
-
   const document = SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, document);
-
   const prismaService = app.get(PrismaService);
   await prismaService.enableShutdownHooks(app);
-  await app.listen(port);
+  await app.listen(3000);
 }
-
 bootstrap();
